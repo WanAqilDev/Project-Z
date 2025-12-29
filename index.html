@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Chief</title>
+    <style>
+        /* CSS STYLES */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .terminal-window {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(10, 10, 10, 0.95);
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            background-color: #1f1f1f;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+
+        .title { margin-left: 10px; color: #ccc; font-size: 14px; font-weight: bold; }
+
+        .terminal-content {
+            padding: 20px;
+            height: 60vh;
+            overflow-y: auto;
+            font-size: 1rem;
+            line-height: 1.5;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #111;
+        }
+
+        /* Syntax Highlighting */
+        .cmd { color: #fff; }
+        .path { color: #00bfff; } /* Light Blue */
+        .success { color: #0f0; font-weight: bold; }
+        .warning { color: #f1c40f; }
+        .error { color: #ff0000; font-weight: bold; }
+        .variable { color: #e91e63; } /* Pink */
+        .string { color: #f1c40f; } /* Yellow */
+        .gold { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px #ffd700; } /* Chief Title */
+        .highlight { color: #fff; background-color: #222; border: 1px solid #555; padding: 0 4px; border-radius: 3px;}
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: #0f0;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        @media (max-width: 600px) { .terminal-content { font-size: 0.9rem; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="terminal-window">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="title">admin@IT-Dept:~</span>
+        </div>
+        <div class="terminal-content" id="console"></div>
+    </div>
+
+    <script>
+        // 1. Matrix Background
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+        const fontSize = 16;
+        const columns = canvas.width/fontSize;
+        const rainDrops = Array(Math.floor(columns)).fill(1);
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < rainDrops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i*fontSize, rainDrops[i]*fontSize);
+                if(rainDrops[i]*fontSize > canvas.height && Math.random() > 0.975) rainDrops[i] = 0;
+                rainDrops[i]++;
+            }
+        };
+        setInterval(draw, 30);
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        // 2. Typing Sequence
+        const consoleDiv = document.getElementById('console');
+        
+        // This is the sequence of messages
+        const lines = [
+            { text: "<span class='path'>root@server:~$</span> ./identify_user.sh", delay: 50 },
+            { text: "Scanning biometrics...", delay: 600 },
+            { text: "Identity Verified: <span class='variable'>Zaid Zhohiruddin Bin Ahmad Shafizi</span>", delay: 800 },
+            { text: "Retrieving Corporate Title...", delay: 400 },
+            { text: "Current Role: <span class='gold'>[ CHIEF OF IT ]</span>", delay: 1000 },
+            { text: "<br><span class='path'>root@server:~$</span> run system_dependency_check", delay: 500 },
+            { text: "Checking critical infrastructure...", delay: 400 },
+            { text: "> Servers... [ONLINE]", delay: 200 },
+            { text: "> Database... [ONLINE]", delay: 200 },
+            { text: "> Network... [ONLINE]", delay: 200 },
+            { text: "Analyzing core stability factor...", delay: 800 },
+            { text: "<span class='warning'>ALERT:</span> Core Dependency Identified.", delay: 600 },
+            { text: "Logic verification result:", delay: 400 },
+            { text: "<span class='highlight'>There won't be IT without 'Abng Zaid'</span>", delay: 1200 },
+            { text: "<span class='success'>Conclusion: You are the backbone of the system.</span>", delay: 800 },
+            { text: "---------------------------------------------------", delay: 100 },
+            { text: "Executing birthday_wish.exe...", delay: 500 },
+            { text: "<br><span class='string'>'Happy Birthday, Chief!'</span>", delay: 100 },
+            { text: "Wishing you infinite uptime, zero bugs, and", delay: 50 },
+            { text: "maximum longevity in health and wealth.", delay: 50 },
+            { text: "<br>Enjoy your special day, Abng Zaid.", delay: 50 },
+            { text: "<br><span class='path'>root@server:~$</span> <span class='cursor'></span>", delay: 0 }
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentLineElement = null;
+
+        function typeLine() {
+            if (lineIndex < lines.length) {
+                const lineData = lines[lineIndex];
+                
+                if (charIndex === 0) {
+                    const newLine = document.createElement('div');
+                    newLine.innerHTML = ""; 
+                    consoleDiv.appendChild(newLine);
+                    currentLineElement = newLine;
+                    
+                    // Instant print for command lines to make reading easier
+                    if (lineData.text.includes('<span class=\'path\'>') || lineData.text.includes('---')) {
+                         currentLineElement.innerHTML = lineData.text;
+                         lineIndex++;
+                         charIndex = 0;
+                         setTimeout(typeLine, lineData.delay);
+                         consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                         return;
+                    }
+                }
+
+                if (charIndex < lineData.text.length) {
+                    // Simple HTML parsing: if we hit a < tag, append the whole tag
+                    if (lineData.text.charAt(charIndex) === '<') {
+                        const closeTagIndex = lineData.text.indexOf('>', charIndex);
+                        if (closeTagIndex !== -1) {
+                            currentLineElement.innerHTML += lineData.text.substring(charIndex, closeTagIndex + 1);
+                            charIndex = closeTagIndex + 1;
+                        }
+                    } else {
+                        currentLineElement.innerHTML += lineData.text.charAt(charIndex);
+                        charIndex++;
+                    }
+                    setTimeout(typeLine, 30); 
+                } else {
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeLine, lineData.delay);
+                }
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            }
+        }
+
+        setTimeout(typeLine, 1000);
+    </script>
+</body>
+</html>
